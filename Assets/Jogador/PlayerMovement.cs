@@ -92,11 +92,12 @@ public class PlayerMovement : MonoBehaviour
                 // Instancia o projétil no ponto de spawn
                 GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
 
-                // Define a direção do projétil
+                // Define a direção do projétil com base na orientação do player
                 Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
                 if (projectileRb != null)
                 {
-                    float direction = spriteRenderer.flipX ? -1f : 1f; // Direção baseada no flip do sprite
+                    // Direção baseada no flip do sprite do player
+                    float direction = spriteRenderer.flipX ? -1f : 1f; 
                     projectileRb.velocity = new Vector2(direction * projectileSpeed, 0f);
                 }
             }
