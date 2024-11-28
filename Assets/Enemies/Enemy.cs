@@ -1,3 +1,5 @@
+// Classe Enemy.cs
+
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -7,8 +9,8 @@ public class Enemy : MonoBehaviour
     protected int currentHealth;
     public Vector2 moveRange = new Vector2(-2f, 2f); // Raio de movimento   
 
-    private Vector2 startPosition;
-    private bool movingRight = true;
+    protected Vector2 startPosition; // Alterado para protected
+    protected bool movingLeft = true;
 
     protected virtual void Start()
     {
@@ -21,14 +23,24 @@ public class Enemy : MonoBehaviour
         Move();
     }
 
-    protected void Move()
+    protected virtual void Move()
     {
-        float newPositionX = transform.position.x + (movingRight ? moveSpeed : -moveSpeed) * Time.deltaTime;
+        float newPositionX = transform.position.x + (movingLeft ? moveSpeed : -moveSpeed) * Time.deltaTime;
 
-        if (newPositionX > startPosition.x + moveRange.y) movingRight = false;
-        else if (newPositionX < startPosition.x + moveRange.x) movingRight = true;
+        if (newPositionX > startPosition.x + moveRange.y) movingLeft = false;
+        else if (newPositionX < startPosition.x + moveRange.x) movingLeft = true;
 
         transform.position = new Vector2(newPositionX, transform.position.y);
+
+        // Corrigindo a inversão da animação
+        if (movingLeft)
+        {
+            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z); // Virar para a direita
+        }
+        else
+        {
+            transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z); // Virar para a esquerda
+        }
     }
 
     public void TakeDamage(int damage)
@@ -43,7 +55,6 @@ public class Enemy : MonoBehaviour
         Destroy(gameObject);
     }
 
-    // Método para acessar startPosition
     public Vector2 GetStartPosition()
     {
         return startPosition;
