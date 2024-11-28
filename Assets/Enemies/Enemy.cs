@@ -5,8 +5,7 @@ public class Enemy : MonoBehaviour
     public float moveSpeed = 2f;
     public int maxHealth = 1;
     protected int currentHealth;
-    public Vector2 moveRange = new Vector2(-2f, 2f); // Raio de movimento
-    public LayerMask groundLayer;
+    public Vector2 moveRange = new Vector2(-2f, 2f); // Raio de movimento   
 
     private Vector2 startPosition;
     private bool movingRight = true;
@@ -42,5 +41,11 @@ public class Enemy : MonoBehaviour
     protected virtual void Die()
     {
         Destroy(gameObject);
+    }
+
+    // Método para acessar startPosition
+    public Vector2 GetStartPosition()
+    {
+        return startPosition;
     }
 }

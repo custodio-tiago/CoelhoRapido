@@ -1,40 +1,61 @@
+// Classe Enemy3.cs
+
 using UnityEngine;
 
 public class Enemy3 : Enemy
 {
-    public float jumpForce = 5f;
-    private Rigidbody2D rb;
-    private bool isGrounded;
+    public float flySpeed = 2f; // Velocidade do voo horizontal
+    public float heightAmplitude = 2f; // Amplitude da altura do voo (quanto o inimigo sobe/desce)
+    public float frequency = 1f; // Frequência da oscilação (mais alto = mais rápido o movimento)
+    public float directionChangeInterval = 2f; // Intervalo de tempo para mudar a direção horizontal (2 segundos)
+
+    private float timeElapsed;
+    private float directionChangeTimer;
+    private bool movingRight = true; // Flag para controlar a direção horizontal
+
+    private Animator animator;
+    private SpriteRenderer spriteRenderer;
 
     protected override void Start()
     {
-        base.Start();
-        rb = GetComponent<Rigidbody2D>();
+        base.Start(); // Chama o Start da classe base (Enemy)
+        timeElapsed = 0f;
+        directionChangeTimer = 0f;
+
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     protected override void Update()
     {
-        base.Update();
+        base.Update(); // Chama o Update da classe base (Enemy)
 
-        if (isGrounded)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-        }
+        // Atualiza o movimento do inimigo
+        MoveInZigZag();
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    void MoveInZigZag()
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
-        {
-            isGrounded = true;
-        }
-    }
+        timeElapsed += Time.deltaTime;
+        directionChangeTimer += Time.deltaTime;
 
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        // Altera a direção a cada 'directionChangeInterval' segundos
+        if (directionChangeTimer >= directionChangeInterval)
         {
-            isGrounded = false;
+            movingRight = !movingRight; // Inverte a direção horizontal
+            directionChangeTimer = 0f; // Reseta o timer para o próximo intervalo
         }
+
+        // Movimento horizontal: alterna entre direita e esquerda com base na direção
+        float moveDirection = movingRight ? 1f : -1f;
+
+        // Movimento vertical: movimento em zigue-zague (seno)
+        float newPositionY = GetStartPosition().y + Mathf.Sin(timeElapsed * frequency) * heightAmplitude;
+
+        // Atualiza a posição do inimigo
+        transform.position = new Vector2(transform.position.x + moveDirection * flySpeed * Time.deltaTime, newPositionY);
+
+        // Debugging: Para ver o movimento
+        Debug.Log("Flying at position: " + transform.position);
     }
 }
