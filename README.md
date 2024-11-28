@@ -1,7 +1,7 @@
 # CoelhoRapido
 Jogo de plataforma 2D com Unity, usando C#.
   
-![image](https://github.com/user-attachments/assets/0159d72d-07ba-41f0-a9b4-1533d7b37035)
+![image](https://github.com/user-attachments/assets/98d5e81d-15dd-473b-bf01-d36d2f71e943)
 
 
 ## Ideia
