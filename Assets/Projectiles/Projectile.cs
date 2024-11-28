@@ -21,7 +21,7 @@ public class Projectile : MonoBehaviour
                 Destroy(gameObject); // Destroi o projétil após atingir o inimigo
             }
         }
-        else if (collision.CompareTag("Ground"))
+        else if (collision.CompareTag("Plataforma"))
         {
             Destroy(gameObject); // Destroi o projétil ao tocar o chão
         }
