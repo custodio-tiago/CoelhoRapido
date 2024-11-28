@@ -47,7 +47,12 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Camera\CameraFollow.cs" />
+     <Compile Include="Assets\Enemies\Enemy.cs" />
+     <Compile Include="Assets\Enemies\Enemy1.cs" />
+     <Compile Include="Assets\Enemies\Enemy2.cs" />
+     <Compile Include="Assets\Enemies\Enemy3.cs" />
      <Compile Include="Assets\Jogador\PlayerMovement.cs" />
+     <Compile Include="Assets\Projectiles\Projectile.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Hub/Editor/5.6.7f1/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

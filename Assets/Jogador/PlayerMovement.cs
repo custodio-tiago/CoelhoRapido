@@ -6,6 +6,9 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce = 10f;
     public float groundCheckDistance = 1.1f; // Distância para o Raycast
     public LayerMask groundLayer; // Camada para verificar o chão
+    public GameObject projectilePrefab; // Prefab do projétil
+    public Transform projectileSpawnPoint; // Ponto de disparo do projétil
+    public float projectileSpeed = 10f; // Velocidade do projétil
 
     private Rigidbody2D rb;
     private bool isGrounded;
@@ -24,6 +27,7 @@ public class PlayerMovement : MonoBehaviour
         Move();
         Jump();
         CheckGroundStatus(); // Verifica se está no chão
+        Shoot(); // Chama o método de disparar
     }
 
     void Move()
@@ -49,7 +53,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-   void Jump()
+    void Jump()
     {
         // Verifica se o jogador apertou a tecla de pulo e está no chão
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
@@ -78,6 +82,31 @@ public class PlayerMovement : MonoBehaviour
         isGrounded = hit.collider != null;
     }
 
+    void Shoot()
+    {
+        // Verifica se a tecla CTRL foi pressionada
+        if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
+        {
+            if (projectilePrefab != null && projectileSpawnPoint != null)
+            {
+                // Instancia o projétil no ponto de spawn
+                GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
+
+                // Define a direção do projétil
+                Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
+                if (projectileRb != null)
+                {
+                    float direction = spriteRenderer.flipX ? -1f : 1f; // Direção baseada no flip do sprite
+                    projectileRb.velocity = new Vector2(direction * projectileSpeed, 0f);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Prefab ou ponto de spawn do projétil não está configurado!");
+            }
+        }
+    }
+    
     void OnDrawGizmos()
     {
         // Desenha um gizmo para mostrar a distância do Raycast
