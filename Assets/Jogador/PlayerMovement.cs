@@ -93,6 +93,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 rb.velocity = new Vector2(rb.velocity.x, bounceForce); // Adiciona o bounce
                 enemy.TakeDamage(1); // Inimigo perde 1 de vida
+                Debug.Log("Pulo detectado sobre o inimigo: " + enemy.name);
             }
         }
     }

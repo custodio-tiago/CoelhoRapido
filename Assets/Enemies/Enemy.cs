@@ -3,7 +3,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public float moveSpeed = 2f;
-    public int maxHealth = 1;
+    public int maxHealth = 2;
     protected int currentHealth;
     public Vector2 moveRange = new Vector2(-2f, 2f);
 
@@ -14,6 +14,7 @@ public class Enemy : MonoBehaviour
     {
         startPosition = transform.position;
         currentHealth = maxHealth;
+        Debug.Log(name + " configurado com " + currentHealth + " de vida.");
     }
 
     protected virtual void Update()
@@ -39,12 +40,14 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
+        Debug.Log(name + " recebeu " + damage + " de dano. Vida restante: " + currentHealth);
         if (currentHealth <= 0)
             Die();
     }
 
     protected virtual void Die()
     {
+        Debug.Log(name + " morreu.");
         Destroy(gameObject);
     }
 

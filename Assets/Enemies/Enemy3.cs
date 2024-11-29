@@ -14,8 +14,11 @@ public class Enemy3 : Enemy
     protected override void Start()
     {
         base.Start();
+        maxHealth = 3;  // Configura a vida do Enemy3 para 3
+        currentHealth = maxHealth;  // Inicializa a vida atual
         timeElapsed = 0f;
         directionChangeTimer = 0f;
+        Debug.Log(name + " configurado com " + maxHealth + " de vida.");
     }
 
     protected override void Update()
@@ -35,8 +38,9 @@ public class Enemy3 : Enemy
             directionChangeTimer = 0f;
         }
 
+        // Usando diretamente a posição inicial armazenada em startPosition
         float moveDirection = movingRight ? 1f : -1f;
-        float newPositionY = GetStartPosition().y + Mathf.Sin(timeElapsed * frequency) * heightAmplitude;
+        float newPositionY = startPosition.y + Mathf.Sin(timeElapsed * frequency) * heightAmplitude; // Alterando Y com base na altura
         transform.position = new Vector2(transform.position.x + moveDirection * flySpeed * Time.deltaTime, newPositionY);
     }
 }

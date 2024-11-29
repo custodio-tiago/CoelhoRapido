@@ -8,5 +8,6 @@ public class Enemy1 : Enemy
         moveSpeed = 1f;
         maxHealth = 1;
         moveRange = new Vector2(-1f, 1f);
+        Debug.Log(name + " configurado com " + maxHealth + " de vida.");
     }
 }
