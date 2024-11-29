@@ -4,11 +4,12 @@ public class PlayerMovement : MonoBehaviour
 {
     public float speed = 5f;
     public float jumpForce = 10f;
-    public float groundCheckDistance = 1.1f; // Distância para o Raycast
-    public LayerMask groundLayer; // Camada para verificar o chão
-    public GameObject projectilePrefab; // Prefab do projétil
-    public Transform projectileSpawnPoint; // Ponto de disparo do projétil
-    public float projectileSpeed = 10f; // Velocidade do projétil
+    public float groundCheckDistance = 1.1f;
+    public LayerMask groundLayer;
+    public GameObject projectilePrefab;
+    public Transform projectileSpawnPoint;
+    public float projectileSpeed = 10f;
+    public float bounceForce = 5f;
 
     private Rigidbody2D rb;
     private bool isGrounded;
@@ -26,78 +27,51 @@ public class PlayerMovement : MonoBehaviour
     {
         Move();
         Jump();
-        CheckGroundStatus(); // Verifica se está no chão
-        Shoot(); // Chama o método de disparar
+        CheckGroundStatus();
+        Shoot();
     }
 
     void Move()
     {
         float moveInput = Input.GetAxis("Horizontal");
-        
-        // Suaviza a desaceleração quando o jogador solta a tecla
         float targetVelocityX = moveInput * speed;
         float smoothVelocityX = Mathf.Lerp(rb.velocity.x, targetVelocityX, Time.deltaTime * 10f);
         rb.velocity = new Vector2(smoothVelocityX, rb.velocity.y);
 
-        // Controla a animação de andar
         animator.SetBool("isWalking", Mathf.Abs(moveInput) > 0.1f);
 
-        // Inverte o sprite dependendo da direção
         if (moveInput > 0)
-        {
-            spriteRenderer.flipX = false; // Olhando para a direita
-        }
+            spriteRenderer.flipX = false;
         else if (moveInput < 0)
-        {
-            spriteRenderer.flipX = true; // Olhando para a esquerda
-        }
+            spriteRenderer.flipX = true;
     }
 
     void Jump()
     {
-        // Verifica se o jogador apertou a tecla de pulo e está no chão
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-            
-            // Aciona a animação de salto (trigger)
             animator.SetTrigger("Jump");
         }
     }
-    
+
     void CheckGroundStatus()
     {
-        // Usando um Raycast para verificar se o jogador está no chão
         RaycastHit2D hit = Physics2D.Raycast(transform.position + Vector3.down * 0.1f, Vector2.down, groundCheckDistance, groundLayer);
-        
-        if (hit.collider != null)
-        {
-            Debug.Log("Grounded: " + hit.collider.gameObject.name);
-        }
-        else
-        {
-            Debug.Log("Not grounded");
-        }
-        
         isGrounded = hit.collider != null;
     }
 
     void Shoot()
     {
-        // Verifica se a tecla CTRL foi pressionada
         if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
         {
             if (projectilePrefab != null && projectileSpawnPoint != null)
             {
-                // Instancia o projétil no ponto de spawn
                 GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
-
-                // Define a direção do projétil com base na orientação do player
                 Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
                 if (projectileRb != null)
                 {
-                    // Direção baseada no flip do sprite do player
-                    float direction = spriteRenderer.flipX ? -1f : 1f; 
+                    float direction = spriteRenderer.flipX ? -1f : 1f;
                     projectileRb.velocity = new Vector2(direction * projectileSpeed, 0f);
                 }
             }
@@ -107,10 +81,24 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
-    
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+        if (enemy != null)
+        {
+            // Verifica se o player está pulando por cima do inimigo
+            bool hitFromAbove = collision.contacts[0].point.y > transform.position.y;
+            if (hitFromAbove)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, bounceForce); // Adiciona o bounce
+                enemy.TakeDamage(1); // Inimigo perde 1 de vida
+            }
+        }
+    }
+
     void OnDrawGizmos()
     {
-        // Desenha um gizmo para mostrar a distância do Raycast
         if (Application.isPlaying)
         {
             Gizmos.color = Color.red;

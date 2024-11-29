@@ -1,5 +1,3 @@
-// Classe Enemy.cs
-
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -7,9 +5,9 @@ public class Enemy : MonoBehaviour
     public float moveSpeed = 2f;
     public int maxHealth = 1;
     protected int currentHealth;
-    public Vector2 moveRange = new Vector2(-2f, 2f); // Raio de movimento   
+    public Vector2 moveRange = new Vector2(-2f, 2f);
 
-    protected Vector2 startPosition; // Alterado para protected
+    protected Vector2 startPosition;
     protected bool movingLeft = true;
 
     protected virtual void Start()
@@ -32,22 +30,17 @@ public class Enemy : MonoBehaviour
 
         transform.position = new Vector2(newPositionX, transform.position.y);
 
-        // Corrigindo a inversão da animação
         if (movingLeft)
-        {
-            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z); // Virar para a direita
-        }
+            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         else
-        {
-            transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z); // Virar para a esquerda
-        }
+            transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
     }
 
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
-
-        if (currentHealth <= 0) Die();
+        if (currentHealth <= 0)
+            Die();
     }
 
     protected virtual void Die()
