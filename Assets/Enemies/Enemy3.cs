@@ -54,8 +54,5 @@ public class Enemy3 : Enemy
 
         // Atualiza a posição do inimigo
         transform.position = new Vector2(transform.position.x + moveDirection * flySpeed * Time.deltaTime, newPositionY);
-
-        // Debugging: Para ver o movimento
-        Debug.Log("Flying at position: " + transform.position);
     }
 }
