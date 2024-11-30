@@ -13,7 +13,6 @@ public class PlayerMovement : MonoBehaviour
     public float projectileSpeed = 10f;
     public float bounceForce = 5f;
     public int maxLife = 5; // Vida máxima do jogador
-    public GameObject stageCompletedTextPrefab; // Prefab do texto "Stage Completed"
     private GameObject stageCompletedTextInstance; // Instância do texto
 
     private Rigidbody2D rb;
@@ -30,13 +29,13 @@ public class PlayerMovement : MonoBehaviour
         currentLife = maxLife; // Inicializa a vida do jogador
         Debug.Log("Vida inicial do jogador: " + currentLife);
 
-        // Garante que o texto STAGE COMPLETED não esteja visível no início
-        if (stageCompletedTextPrefab != null)
+        // Encontrar o objeto de texto com a tag "FinishText"
+        GameObject stageCompletedTextObject = GameObject.FindGameObjectWithTag("FinishText");
+        if (stageCompletedTextObject != null)
         {
-            stageCompletedTextInstance = Instantiate(stageCompletedTextPrefab);
+            stageCompletedTextInstance = stageCompletedTextObject;
             stageCompletedTextInstance.SetActive(false); // Inicialmente invisível
 
-            // Aqui, pegamos o componente Text para garantir que o conteúdo seja atualizado
             Text textComponent = stageCompletedTextInstance.GetComponent<Text>();
             if (textComponent != null)
             {
@@ -44,8 +43,12 @@ public class PlayerMovement : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("Prefab de 'Stage Completed' não possui o componente Text!");
+                Debug.LogWarning("Objeto com tag 'FinishText' não possui o componente Text!");
             }
+        }
+        else
+        {
+            Debug.LogWarning("Nenhum objeto encontrado com a tag 'FinishText'!");
         }
     }
 
@@ -137,7 +140,7 @@ public class PlayerMovement : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning("Componente Text não encontrado no prefab de StageCompletedText.");
+                    Debug.LogWarning("Componente Text não encontrado no objeto de 'FinishText'.");
                 }
             }
         }

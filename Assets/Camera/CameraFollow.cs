@@ -8,6 +8,7 @@ public class CameraFollow : MonoBehaviour
     public float parallaxEffect = 1f; // Efeito de paralaxe para o fundo (ajustável)
 
     private Camera mainCamera;
+    private GameObject finishText;    // Referência ao objeto de texto "FinishText"
 
     void Start()
     {
@@ -17,6 +18,13 @@ public class CameraFollow : MonoBehaviour
         {
             Debug.LogError("Câmera principal não encontrada. Verifique se a tag da câmera está definida como 'MainCamera'.");
             return;
+        }
+
+        // Encontra o objeto de texto com a tag "FinishText"
+        finishText = GameObject.FindGameObjectWithTag("FinishText");
+        if (finishText == null)
+        {
+            Debug.LogError("Objeto de texto com a tag 'FinishText' não encontrado.");
         }
     }
 
@@ -39,6 +47,14 @@ public class CameraFollow : MonoBehaviour
 
             // Atualiza a posição do background
             background.transform.position = backgroundPosition;
+        }
+
+        // Verifica se o texto "FinishText" foi encontrado e centraliza na tela
+        if (finishText != null)
+        {
+            // Centraliza o texto na posição da câmera
+            finishText.transform.position = mainCamera.WorldToScreenPoint(transform.position);
+            finishText.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, finishText.transform.position.z);
         }
     }
 }
