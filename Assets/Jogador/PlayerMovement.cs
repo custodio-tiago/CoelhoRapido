@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement; // Para reiniciar a cena
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -10,17 +11,21 @@ public class PlayerMovement : MonoBehaviour
     public Transform projectileSpawnPoint;
     public float projectileSpeed = 10f;
     public float bounceForce = 5f;
+    public int maxLife = 5; // Vida máxima do jogador
 
     private Rigidbody2D rb;
     private bool isGrounded;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
+    private int currentLife; // Vida atual do jogador
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        currentLife = maxLife; // Inicializa a vida do jogador
+        Debug.Log("Vida inicial do jogador: " + currentLife);
     }
 
     void Update()
@@ -52,6 +57,7 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             animator.SetTrigger("Jump");
+            Debug.Log("Jogador pulou!");
         }
     }
 
@@ -59,6 +65,7 @@ public class PlayerMovement : MonoBehaviour
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position + Vector3.down * 0.1f, Vector2.down, groundCheckDistance, groundLayer);
         isGrounded = hit.collider != null;
+        Debug.Log("Estado do jogador no chão: " + isGrounded);
     }
 
     void Shoot()
@@ -73,6 +80,7 @@ public class PlayerMovement : MonoBehaviour
                 {
                     float direction = spriteRenderer.flipX ? -1f : 1f;
                     projectileRb.velocity = new Vector2(direction * projectileSpeed, 0f);
+                    Debug.Log("Projétil disparado!");
                 }
             }
             else
@@ -82,20 +90,60 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        Enemy enemy = collision.gameObject.GetComponent<Enemy>();
-        if (enemy != null)
+        Debug.Log("Trigger detectado com: " + collision.gameObject.name);
+
+        if (collision.CompareTag("Enemy"))
         {
-            // Verifica se o player está pulando por cima do inimigo
-            bool hitFromAbove = collision.contacts[0].point.y > transform.position.y;
-            if (hitFromAbove)
+            Debug.Log("Trigger detectado com um inimigo!");
+
+            // Verifica se o jogador está caindo
+            bool isFalling = rb.velocity.y < 0;
+            if (isFalling)
             {
+                // Jogador pulou sobre o inimigo
                 rb.velocity = new Vector2(rb.velocity.x, bounceForce); // Adiciona o bounce
-                enemy.TakeDamage(1); // Inimigo perde 1 de vida
-                Debug.Log("Pulo detectado sobre o inimigo: " + enemy.name);
+                Enemy enemy = collision.GetComponent<Enemy>();
+                if (enemy != null)
+                {
+                    enemy.TakeDamage(5); // Causa 5 de dano ao inimigo
+                    Debug.Log("Jogador pulou sobre o inimigo e causou 5 de dano!");
+                }
+                else
+                {
+                    Debug.LogWarning("Objeto com tag 'Enemy' não possui componente Enemy.");
+                }
+            }
+            else
+            {
+                // Jogador colidiu normalmente com o inimigo
+                TakeDamage(1); // Recebe 1 de dano
+                Debug.Log("Jogador colidiu com o inimigo e recebeu 1 de dano.");
             }
         }
+        else
+        {
+            Debug.Log("Trigger detectado, mas o objeto não é um inimigo!");
+        }
+    }
+
+    void TakeDamage(int damage)
+    {
+        currentLife -= damage;
+        Debug.Log("Jogador recebeu " + damage + " de dano. Vida restante: " + currentLife);
+
+        if (currentLife <= 0)
+        {
+            Debug.Log("Jogador morreu. Reiniciando o jogo...");
+            RestartGame();
+        }
+    }
+
+    void RestartGame()
+    {
+        Debug.Log("Reiniciando a cena...");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reinicia a cena atual
     }
 
     void OnDrawGizmos()
