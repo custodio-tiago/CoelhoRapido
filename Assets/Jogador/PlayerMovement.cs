@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement; // Para reiniciar a cena
+using UnityEngine.SceneManagement;
+using UnityEngine.UI; // Para usar o componente Text do UI
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -34,6 +35,17 @@ public class PlayerMovement : MonoBehaviour
         {
             stageCompletedTextInstance = Instantiate(stageCompletedTextPrefab);
             stageCompletedTextInstance.SetActive(false); // Inicialmente invisível
+
+            // Aqui, pegamos o componente Text para garantir que o conteúdo seja atualizado
+            Text textComponent = stageCompletedTextInstance.GetComponent<Text>();
+            if (textComponent != null)
+            {
+                textComponent.text = ""; // Inicializa o texto como vazio
+            }
+            else
+            {
+                Debug.LogWarning("Prefab de 'Stage Completed' não possui o componente Text!");
+            }
         }
     }
 
@@ -114,8 +126,19 @@ public class PlayerMovement : MonoBehaviour
             if (stageCompletedTextInstance != null)
             {
                 stageCompletedTextInstance.SetActive(true); // Torna o texto visível
-                // Garantir que o texto fique visível no centro da tela
-                stageCompletedTextInstance.transform.position = Camera.main.WorldToScreenPoint(transform.position);
+                // Atualiza o conteúdo do texto para "STAGE COMPLETED"
+                Text textComponent = stageCompletedTextInstance.GetComponent<Text>();
+                if (textComponent != null)
+                {
+                    textComponent.text = "STAGE COMPLETED"; // Define o texto como "STAGE COMPLETED"
+                    // Garantir que o texto fique visível no centro da tela
+                    stageCompletedTextInstance.transform.position = Camera.main.WorldToScreenPoint(transform.position);
+                    Debug.LogWarning("STAGE COMPLETED!");
+                }
+                else
+                {
+                    Debug.LogWarning("Componente Text não encontrado no prefab de StageCompletedText.");
+                }
             }
         }
 
