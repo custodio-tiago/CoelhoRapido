@@ -12,6 +12,8 @@ public class PlayerMovement : MonoBehaviour
     public float projectileSpeed = 10f;
     public float bounceForce = 5f;
     public int maxLife = 5; // Vida máxima do jogador
+    public GameObject stageCompletedTextPrefab; // Prefab do texto "Stage Completed"
+    private GameObject stageCompletedTextInstance; // Instância do texto
 
     private Rigidbody2D rb;
     private bool isGrounded;
@@ -26,6 +28,13 @@ public class PlayerMovement : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         currentLife = maxLife; // Inicializa a vida do jogador
         Debug.Log("Vida inicial do jogador: " + currentLife);
+
+        // Garante que o texto STAGE COMPLETED não esteja visível no início
+        if (stageCompletedTextPrefab != null)
+        {
+            stageCompletedTextInstance = Instantiate(stageCompletedTextPrefab);
+            stageCompletedTextInstance.SetActive(false); // Inicialmente invisível
+        }
     }
 
     void Update()
@@ -94,6 +103,22 @@ public class PlayerMovement : MonoBehaviour
     {
         Debug.Log("Trigger detectado com: " + collision.gameObject.name);
 
+        if (collision.CompareTag("FinishFlag"))
+        {
+            Debug.Log("Trigger detectado com a bandeira de fim de fase!");
+
+            // Pausa o jogo
+            Time.timeScale = 0f;
+
+            // Exibe o texto de "Stage Completed"
+            if (stageCompletedTextInstance != null)
+            {
+                stageCompletedTextInstance.SetActive(true); // Torna o texto visível
+                // Garantir que o texto fique visível no centro da tela
+                stageCompletedTextInstance.transform.position = Camera.main.WorldToScreenPoint(transform.position);
+            }
+        }
+
         if (collision.CompareTag("Enemy"))
         {
             Debug.Log("Trigger detectado com um inimigo!");
@@ -121,10 +146,6 @@ public class PlayerMovement : MonoBehaviour
                 TakeDamage(1); // Recebe 1 de dano
                 Debug.Log("Jogador colidiu com o inimigo e recebeu 1 de dano.");
             }
-        }
-        else
-        {
-            Debug.Log("Trigger detectado, mas o objeto não é um inimigo!");
         }
     }
 
