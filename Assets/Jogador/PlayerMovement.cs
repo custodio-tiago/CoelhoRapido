@@ -15,6 +15,8 @@ public class PlayerMovement : MonoBehaviour
     public int maxLife = 5; // Vida máxima do jogador
     public GameObject heartPrefab; // Prefab de coração para UI
     public Transform lifePanel;   // Painel para os corações de vida
+    public int maxCoins = 100; // Máximo de moedas que o jogador pode coletar
+    public Text coinText; // UI para exibir o número de moedas
 
     private GameObject stageCompletedTextInstance; // Instância do texto
     private Rigidbody2D rb;
@@ -22,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     private int currentLife; // Vida atual do jogador
+    private int currentCoins; // Moedas coletadas
 
     void Start()
     {
@@ -29,10 +32,13 @@ public class PlayerMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         currentLife = maxLife; // Inicializa a vida do jogador
+        currentCoins = 0; // Inicializa as moedas do jogador
         Debug.Log("Vida inicial do jogador: " + currentLife);
+        Debug.Log("Moedas iniciais: " + currentCoins);
 
         // Atualiza a UI com os corações iniciais
         UpdateLifeUI();
+        UpdateCoinUI();
 
         // Encontrar o objeto de texto com a tag "FinishText"
         GameObject stageCompletedTextObject = GameObject.FindGameObjectWithTag("FinishText");
@@ -173,6 +179,20 @@ public class PlayerMovement : MonoBehaviour
                 Debug.Log("Jogador colidiu com o inimigo e recebeu 1 de dano.");
             }
         }
+
+        if (collision.CompareTag("Coin"))
+        {
+            Debug.Log("Trigger detectado com uma moeda!");
+            CollectCoin(1); // Coleta 1 moeda
+            Destroy(collision.gameObject); // Destroi a moeda após coletá-la
+        }
+
+        if (collision.CompareTag("Heart"))
+        {
+            Debug.Log("Trigger detectado com um coração!");
+            CollectHeart(1); // Coleta 1 coração
+            Destroy(collision.gameObject); // Destroi o coração após coletá-lo
+        }
     }
 
     void TakeDamage(int damage)
@@ -188,6 +208,26 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("Jogador morreu. Reiniciando o jogo...");
             RestartGame();
         }
+    }
+
+    void CollectCoin(int amount)
+    {
+        currentCoins += amount;
+        currentCoins = Mathf.Clamp(currentCoins, 0, maxCoins); // Garante que não ultrapasse o máximo
+        Debug.Log("Jogador coletou " + amount + " moeda(s). Moedas totais: " + currentCoins);
+
+        // Atualiza a UI de moedas
+        UpdateCoinUI();
+    }
+
+    void CollectHeart(int amount)
+    {
+        currentLife += amount;
+        currentLife = Mathf.Clamp(currentLife, 0, maxLife); // Garante que não ultrapasse o máximo
+        Debug.Log("Jogador coletou " + amount + " coração(ões). Vida atual: " + currentLife);
+
+        // Atualiza a UI de vida
+        UpdateLifeUI();
     }
 
     void UpdateLifeUI()
@@ -213,6 +253,15 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    void UpdateCoinUI()
+    {
+        if (coinText != null)
+        {
+            coinText.text = "" + currentCoins; // Atualiza o texto da UI com as moedas coletadas
+            Debug.Log(currentCoins);
+        }
+    }
+
     void RestartGame()
     {
         Debug.Log("Reiniciando a cena...");
@@ -221,10 +270,15 @@ public class PlayerMovement : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        if (Application.isPlaying)
+        if (isGrounded)
+        {
+            Gizmos.color = Color.green;
+        }
+        else
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawLine(transform.position, transform.position + Vector3.down * groundCheckDistance);
         }
+
+        Gizmos.DrawRay(transform.position, Vector2.down * groundCheckDistance);
     }
 }
