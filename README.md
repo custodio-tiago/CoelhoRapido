@@ -18,7 +18,7 @@ Você controla Rápido, um coelho que é rápido e pula pelas plataformas combat
 - Os inimigos podem sar batidos saltando-se sobre eles ou atirando
   > Tiro: 1 de dano nos inimigos  
   > Salto: mais poderoso, causa 5 de dano nos inimigos
-- Finish Flag quando alcançada termina a fase
+- Finish Flag quando alcançada termina a fase  
 ![image](https://github.com/user-attachments/assets/5cdf0bab-acf2-4543-98c1-730db22d4d76)
 - Health Bar que mostra a vida do Player, e atualiza quando ele leva dano e quando acha Vida pela fase 
 ![image](https://github.com/user-attachments/assets/49bc4b50-2615-4566-a2f8-bf41d7286fc2)
