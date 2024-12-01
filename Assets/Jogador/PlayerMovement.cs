@@ -203,6 +203,14 @@ public class PlayerMovement : MonoBehaviour
         {
             Instantiate(heartPrefab, lifePanel);
         }
+
+        // Atualiza o tamanho do LifePanel dinamicamente
+        RectTransform rectTransform = lifePanel.GetComponent<RectTransform>();
+        if (rectTransform != null)
+        {
+            float newWidth = 40f * currentLife; // Cada coração ocupa 40 de largura
+            rectTransform.sizeDelta = new Vector2(newWidth, rectTransform.sizeDelta.y);
+        }
     }
 
     void RestartGame()
