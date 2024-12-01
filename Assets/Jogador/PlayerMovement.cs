@@ -13,8 +13,10 @@ public class PlayerMovement : MonoBehaviour
     public float projectileSpeed = 10f;
     public float bounceForce = 5f;
     public int maxLife = 5; // Vida máxima do jogador
-    private GameObject stageCompletedTextInstance; // Instância do texto
+    public GameObject heartPrefab; // Prefab de coração para UI
+    public Transform lifePanel;   // Painel para os corações de vida
 
+    private GameObject stageCompletedTextInstance; // Instância do texto
     private Rigidbody2D rb;
     private bool isGrounded;
     private Animator animator;
@@ -28,6 +30,9 @@ public class PlayerMovement : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         currentLife = maxLife; // Inicializa a vida do jogador
         Debug.Log("Vida inicial do jogador: " + currentLife);
+
+        // Atualiza a UI com os corações iniciais
+        UpdateLifeUI();
 
         // Encontrar o objeto de texto com a tag "FinishText"
         GameObject stageCompletedTextObject = GameObject.FindGameObjectWithTag("FinishText");
@@ -129,12 +134,10 @@ public class PlayerMovement : MonoBehaviour
             if (stageCompletedTextInstance != null)
             {
                 stageCompletedTextInstance.SetActive(true); // Torna o texto visível
-                // Atualiza o conteúdo do texto para "STAGE COMPLETED"
                 Text textComponent = stageCompletedTextInstance.GetComponent<Text>();
                 if (textComponent != null)
                 {
                     textComponent.text = "STAGE COMPLETED"; // Define o texto como "STAGE COMPLETED"
-                    // Garantir que o texto fique visível no centro da tela
                     stageCompletedTextInstance.transform.position = Camera.main.WorldToScreenPoint(transform.position);
                     Debug.LogWarning("STAGE COMPLETED!");
                 }
@@ -149,11 +152,9 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.Log("Trigger detectado com um inimigo!");
 
-            // Verifica se o jogador está caindo
             bool isFalling = rb.velocity.y < 0;
             if (isFalling)
             {
-                // Jogador pulou sobre o inimigo
                 rb.velocity = new Vector2(rb.velocity.x, bounceForce); // Adiciona o bounce
                 Enemy enemy = collision.GetComponent<Enemy>();
                 if (enemy != null)
@@ -168,7 +169,6 @@ public class PlayerMovement : MonoBehaviour
             }
             else
             {
-                // Jogador colidiu normalmente com o inimigo
                 TakeDamage(1); // Recebe 1 de dano
                 Debug.Log("Jogador colidiu com o inimigo e recebeu 1 de dano.");
             }
@@ -180,10 +180,28 @@ public class PlayerMovement : MonoBehaviour
         currentLife -= damage;
         Debug.Log("Jogador recebeu " + damage + " de dano. Vida restante: " + currentLife);
 
+        // Atualiza a UI
+        UpdateLifeUI();
+
         if (currentLife <= 0)
         {
             Debug.Log("Jogador morreu. Reiniciando o jogo...");
             RestartGame();
+        }
+    }
+
+    void UpdateLifeUI()
+    {
+        // Limpa os corações existentes
+        foreach (Transform child in lifePanel)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // Instancia novos corações de acordo com a vida atual
+        for (int i = 0; i < currentLife; i++)
+        {
+            Instantiate(heartPrefab, lifePanel);
         }
     }
 
