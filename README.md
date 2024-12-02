@@ -15,7 +15,7 @@ Você controla Rápido, um coelho que é rápido e pula pelas plataformas combat
   > Enemy1: mais lento, tem 1 de vida  
   > Enemy2: velocidade moderada, tem 2 de vida  
   > Enemy3: voa e tem velocidade maior, e tem 3 de vida
-- Os inimigos podem sar batidos saltando-se sobre eles ou atirando
+- Os inimigos podem ser batidos saltando sobre eles ou atirando
   > Tiro: 1 de dano nos inimigos  
   > Salto: mais poderoso, causa 5 de dano nos inimigos
 - Finish Flag quando alcançada termina a fase  
